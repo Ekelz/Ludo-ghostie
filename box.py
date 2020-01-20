@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 
 import tkinter as tk
-from tkinter import ttk
 
 
 class Box:
@@ -22,8 +21,8 @@ class Box:
                                            y_coor=self.y0 + 14, master=master)
 
     def swap(self, x_coor, y_coor, master):
-        self.label_image.pack(in_=master)
-        self.label_image.place(x=x_coor - 15, y=y_coor - 15)
+        # self.label_image.pack(in_=master)
+        self.label_image.place(x=x_coor - 13, y=y_coor - 14)
 
     @staticmethod
     def init_image(image, width, height, x_coor, y_coor, master=None):

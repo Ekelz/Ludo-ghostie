@@ -11,6 +11,7 @@ from game_config import *
 class Engine:
 
     cx = None
+    cy = None
     player_turn = RED
     turn = True
     rolls_list = []
@@ -18,6 +19,8 @@ class Engine:
     dice = 0
     dice1 = 0
     dice2 = 0
+    rolls_index = 0
+
 
     def __init__(self, canvas):
         # super().__init__()
@@ -39,15 +42,6 @@ class Engine:
         roll_button.place(x=800, y=120)
 
         self.display_turn()
-        # self.game()
-        print(self.turn)
-
-
-    def set_label(self, text, font_color, font, x_coor, y_coor, master=None):
-        label = tk.Label(master, text=text, fg=font_color, font=font)
-        label.pack()  # in_=master
-        label.place(x=x_coor, y=y_coor)
-        return label
 
     def left_click(self, event):
         Engine.cx = self.canvas.winfo_pointerx() - self.canvas.winfo_rootx()
@@ -57,79 +51,11 @@ class Engine:
 
         self.game(cx=Engine.cx, cy=Engine.cy)  # The game is on each time we make a left click
 
-    def rolls(self):
-        if Engine.turn:
-            print("turn: ", Engine.turn)
-
-            Engine.num_rolls = Engine.num_rolls + 1
-            print("Number of rolls: ", Engine.num_rolls)
-
-            if Engine.num_rolls == 1:
-                print("i'm in")
-                Engine.dice = random.randint(1, 6)
-                self.label2 = self.set_label(master=self.canvas, text=Engine.dice, font_color="Black",
-                                             font=LARGE_FONT, x_coor=800, y_coor=200)
-                print("dice:", Engine.dice)
-                Engine.rolls_list.append(Engine.dice)
-                if Engine.dice != 6:
-                    Engine.num_rolls = 0
-                    Engine.turn = False
-                    print(Engine.turn)
-                    print("Next player turn")
-            print("num_rolls: ", Engine.num_rolls)
-
-            if Engine.num_rolls == 2:
-                if Engine.dice == 6:
-                    Engine.dice1 = random.randint(1, 6)
-                    print("dice1: ", Engine.dice1)
-                    self.label3 = self.set_label(master=self.canvas, text=Engine.dice1, font_color="Black",
-                                                 font=LARGE_FONT, x_coor=800, y_coor=250)
-                    print("dice1: ", Engine.dice1)
-                    Engine.rolls_list.append(Engine.dice1)
-                    if Engine.dice1 != 6:
-                        Engine.num_rolls = 0
-                        Engine.turn = False
-                        print("turn1: ", Engine.turn)
-                        print("Next player turn")
-
-            if Engine.num_rolls == 3:
-                if Engine.dice1 == 6:
-                    Engine.dice2 = random.randint(1, 6)
-                    print("dice2: ", Engine.dice2)
-                    self.label4 = self.set_label(master=self.canvas, text=Engine.dice2, font_color="Black",
-                                                 font=LARGE_FONT, x_coor=800, y_coor=300)
-                    print("dice2:", Engine.dice2)
-                    Engine.rolls_list.append(Engine.dice2)
-                    Engine.turn = False
-                    print("Next player turn")
-                    num_rolls = 0
-        print("rolls from rolls' function: ", Engine.rolls_list)
-
-    def check_move(self, player):  # Check if the player can make a move
-        print("##############check_move#############")
-        a = all(roll==6 for roll in Engine.rolls_list)
-        print("check dices: ", a)
-        if all(roll==6 for roll in Engine.rolls_list) == True: # check if he rolled 6 3 times
-            # player.turn = False
-            return False
-
-        win = True
-        if player.num_saved_pawns != 4:
-            win = False
-
-        if (win == False) and (Engine.rolls_list[0] != 6):
-            for i in range(len(player.pawns)):
-                print("In check_move: ", player.pawns[i])
-                if player.pawns[i].curr_index != -1:
-                    print("The player can move his avalaible pawns.")
-                    return True
-                print("The players pawns are all at home. He cannot move")
-                return False
-
-        if win == True:
-            print("the {}_player won the game.".format(player.color))
-            # self.match_ended = True
-            return False
+    def set_label(self, text, font_color, font, x_coor, y_coor, master=None):
+        label = tk.Label(master, text=text, fg=font_color, font=font)
+        label.pack()  # in_=master
+        label.place(x=x_coor, y=y_coor)
+        return label
 
     def next_player(self, player):
         if player.color == RED:
@@ -159,6 +85,80 @@ class Engine:
         if self.player_turn == GREEN:
             self.label1 = self.set_label(text=" Green player turn ", font_color="Black",
                                          font=LARGE_FONT, x_coor=770, y_coor=50)
+
+    def rolls(self):
+        if Engine.turn:
+            # print("turn: ", Engine.turn)
+
+            Engine.num_rolls = Engine.num_rolls + 1
+            # print("Number of rolls: ", Engine.num_rolls)
+
+            if Engine.num_rolls == 1:
+                # print("i'm in")
+                Engine.dice = random.randint(1, 6)
+                self.label2 = self.set_label(master=self.canvas, text=Engine.dice, font_color="Black",
+                                             font=LARGE_FONT, x_coor=800, y_coor=200)
+                # print("dice:", Engine.dice)
+                Engine.rolls_list.append(Engine.dice)
+                if Engine.dice != 6:
+                    Engine.num_rolls = 0
+                    Engine.turn = False
+                    # print(Engine.turn)
+                    print("Next player turn")
+            print("num_rolls: ", Engine.num_rolls)
+
+            if Engine.num_rolls == 2:
+                if Engine.dice == 6:
+                    Engine.dice1 = random.randint(1, 6)
+                    # print("dice1: ", Engine.dice1)
+                    self.label3 = self.set_label(master=self.canvas, text=Engine.dice1, font_color="Black",
+                                                 font=LARGE_FONT, x_coor=800, y_coor=250)
+                    # print("dice1: ", Engine.dice1)
+                    Engine.rolls_list.append(Engine.dice1)
+                    if Engine.dice1 != 6:
+                        Engine.num_rolls = 0
+                        Engine.turn = False
+                        # print("turn1: ", Engine.turn)
+                        # print("Next player turn")
+
+            if Engine.num_rolls == 3:
+                if Engine.dice1 == 6:
+                    Engine.dice2 = random.randint(1, 6)
+                    print("dice2: ", Engine.dice2)
+                    self.label4 = self.set_label(master=self.canvas, text=Engine.dice2, font_color="Black",
+                                                 font=LARGE_FONT, x_coor=800, y_coor=300)
+                    # print("dice2:", Engine.dice2)
+                    Engine.rolls_list.append(Engine.dice2)
+                    Engine.turn = False
+                    print("Next player turn")
+                    num_rolls = 0
+        print("rolls from rolls' function: ", Engine.rolls_list)
+
+    def check_move(self, player):  # Check if the player can make a move
+        print("##############check_move#############")
+        a = all(roll == 6 for roll in Engine.rolls_list)
+        # print("check dices: ", a)
+        if all(roll==6 for roll in Engine.rolls_list) == True: # check if he rolled 6 3 times
+            # player.turn = False
+            return False
+
+        win = True
+        if player.num_saved_pawns != 4:
+            win = False
+
+        if (win == False) and (Engine.rolls_list[0] != 6):
+            for i in range(len(player.pawns)):
+                print("In check_move: ", player.pawns[i])
+                if player.pawns[i].curr_index != -1:
+                    print("The player can move his avalaible pawns.")
+                    return True
+                print("The players pawns are all at home. He cannot move")
+                return False
+
+        if win == True:
+            print("the {}_player won the game.".format(player.color))
+            # self.match_ended = True
+            return False
 
     def kill(self, player, bb, opponent1, opponent2, opponent3):
 
@@ -225,13 +225,11 @@ class Engine:
                         player.pawns[j].double = True
                         player.pawns[k].double = True
 
-    def clean(self):
+    def clean(self):  # Reset the class and instance's  attributes
         Engine.num_rolls = 0
+        Engine.rolls_index = 0
         Engine.rolls_list = []
         Engine.turn = True
-        # self.label2 = self.set_label(text=" ", font_color="Black", font=LARGE_FONT, x_coor=800, y_coor=200)
-        # self.label3 = self.set_label(text=" ", font_color="Black", font=LARGE_FONT, x_coor=800, y_coor=250)
-        # self.label4 = self.set_label(text=" ", font_color="Black", font=LARGE_FONT, x_coor=800, y_coor=300)
         try:
             self.label2.config(text="")
         except AttributeError:
@@ -248,66 +246,169 @@ class Engine:
         print("Cleaned")
         self.display_turn()
 
-    def player_move(self, player, opponent1, opponent2, opponent3, cx, cy):
-        print("#######################game_function############")
+    def move_to_start(self, player, cx, cy, i):
+        print("ENTERING move_to_start_function")
+        if ((cx > player.pawns[i].x0 + 13) and (cx < player.pawns[i].x + 13)):  # Check if click is made on a pawn
+            if ((cy > player.pawns[i].y0 + 14) and (cy < player.pawns[i].y + 14)):
+                if ((player.pawns[i].x0 == player.homes[i].x) and (player.pawns[i].y0 == player.homes[i].y)):
+                    print("A click was made on a {} pawn and it is in his home.".format(player.color))
+
+                    if Engine.rolls_list[Engine.rolls_index] == 6:
+                        player.pawns[i].x0 = player.box_path[0].x
+                        player.pawns[i].y0 = player.box_path[0].y
+                        player.pawns[i].x = player.box_path[0].x + 25
+                        player.pawns[i].y = player.box_path[0].y + 25
+                        player.pawns[i].curr_index = 0  # "placing" pawn on the starting point
+                        print("player.pawns[{}].curr_index: {}".format(i, player.pawns[i].curr_index))
+                        player.pawns[i].swap(x_coor=player.pawns[i].x, y_coor=player.pawns[i].y,
+                                             master=self.canvas)
+                        Engine.rolls_index = Engine.rolls_index + 1
+                        print("FROM move_to_start_function:", Engine.rolls_index)
+
+                        a = True
+                        while a:
+                            if Engine.rolls_index > len(Engine.rolls_list) - 1:
+                                self.next_player(player)
+                            else:
+                                a = False
+        print("EXITING move_to_start_function")
+
+    def move_when_out(self, player, opponent1, opponent2, opponent3, cx, cy, out_x0, out_y0, i):
+        print("ENTERING move_when_out_function")
+        print("player's color: ", player.color)
+        if player.color == RED:
+            print("In move_when_out_function with color: ", player.color)
+            if (cx > player.pawns[i].x0) and (cx < player.pawns[i].x):
+                if (cy > player.pawns[i].y0) and (cy < player.pawns[i].y):
+                    if (player.pawns[i].x0 > out_x0) or (player.pawns[i].y0 > out_y0):
+                        print("A click was made on a {} pawn and it is outside.".format(player.color))
+                        track_index = player.pawns[i].curr_index + Engine.rolls_list[Engine.rolls_index]
+                        print("Engine.rolls_list[Engine.rolls_index]: ", Engine.rolls_list[Engine.rolls_index])
+                        print("track_index: ", track_index)
+
+                        if track_index < 56:
+                            self.kill(player=player, bb=track_index, opponent1=opponent1, opponent2=opponent2,
+                                      opponent3=opponent3)
+                            player.pawns[i].x0 = player.box_path[0].x
+                            player.pawns[i].y0 = player.box_path[0].y
+                            player.pawns[i].x = player.box_path[0].x + 25
+                            player.pawns[i].y = player.box_path[0].y + 25
+                            player.pawns[i].curr_index = 0  # "placing" pawn on the starting point
+                            print("player.pawns[{}].curr_index: {}".format(i, player.pawns[i].curr_index))
+                            player.pawns[i].swap(x_coor=player.pawns[i].x, y_coor=player.pawns[i].y,
+                                                 master=self.canvas)
+
+                            self.double_check(player=player)
+                            Engine.rolls_index = Engine.rolls_index + 1
+
+                        if track_index == 56:
+                            player.pawns.remove(player.pawns[i])
+                            player.num_saved_pawns = player.num_saved_pawns + 1
+                            self.display_turn()
+
+                        a = True
+                        while a:
+                            if track_index > 56:
+                                print("Player cannot move, track_index out of range.")
+                                self.next_player(player)
+                                # self.display_turn()
+                            else:
+                                a = False
+
+        if player.color == BLUE:
+            print("In move_when_out_function with color: ", player.color)
+            if (cx > player.pawns[i].x0) and (cx < player.pawns[i].x):
+                if (cy > player.pawns[i].y0) and (cy < player.pawns[i].y):
+                    if (player.pawns[i].x0 > out_x0) or (player.pawns[i].y0 < out_y0):
+                        print("A click was made on a {} pawn and it is outside.".format(player.color))
+                        track_index = player.pawns[i].curr_index + player.rolls[Engine.rolls_index]
+
+                        if track_index < 56:
+                            self.kill(player=player, bb=track_index, opponent1=opponent1, opponent2=opponent2,
+                                      opponent3=opponent3)
+                            player.pawns[i].x0 = player.box_path[0].x
+                            player.pawns[i].y0 = player.box_path[0].y
+                            player.pawns[i].x = player.box_path[0].x + 25
+                            player.pawns[i].y = player.box_path[0].y + 25
+                            player.pawns[i].curr_index = 0  # "placing" pawn on the starting point
+                            print("player.pawns[{}].curr_index: {}".format(i, player.pawns[i].curr_index))
+                            player.pawns[i].swap(x_coor=player.pawns[i].x, y_coor=player.pawns[i].y,
+                                                 master=self.canvas)
+
+                            self.double_check(player=player)
+                            Engine.rolls_index = Engine.rolls_index + 1
+
+                        if track_index == 56:
+                            player.pawns.remove(player.pawns[i])
+                            player.num_saved_pawns = player.num_saved_pawns + 1
+                            self.display_turn()
+
+                        a = True
+                        while a:
+                            if track_index > 56:
+                                print("Player cannot move, track_index out of range.")
+                                self.next_player(player)
+                                # self.display_turn()
+                            else:
+                                a = False
+
+        if player.color == YELLOW or player.color == GREEN:
+            print("In move_when_out_function with color: ", player.color)
+            if (cx > player.pawns[i].x0) and (cx < player.pawns[i].x):
+                if (cy > player.pawns[i].y0) and (cy < player.pawns[i].y):
+                    if (player.pawns[i].x0 < out_x0) or (player.pawns[i].y0 < out_y0):
+                        print("A click was made on a {} pawn and it is outside.".format(player.color))
+                        track_index = player.pawns[i].curr_index + player.rolls[Engine.rolls_index]
+
+                        if track_index < 56:
+                            self.kill(player=player, bb=track_index, opponent1=opponent1, opponent2=opponent2,
+                                      opponent3=opponent3)
+                            player.pawns[i].x0 = player.box_path[0].x
+                            player.pawns[i].y0 = player.box_path[0].y
+                            player.pawns[i].x = player.box_path[0].x + 25
+                            player.pawns[i].y = player.box_path[0].y + 25
+                            player.pawns[i].curr_index = 0  # "placing" pawn on the starting point
+                            print("player.pawns[{}].curr_index: {}".format(i, player.pawns[i].curr_index))
+                            player.pawns[i].swap(x_coor=player.pawns[i].x, y_coor=player.pawns[i].y,
+                                                 master=self.canvas)
+
+                            self.double_check(player=player)
+                            Engine.rolls_index = Engine.rolls_index + 1
+
+                        if track_index == 56:
+                            player.pawns.remove(player.pawns[i])
+                            player.num_saved_pawns = player.num_saved_pawns + 1
+                            self.display_turn()
+
+                        a = True
+                        while a:
+                            if track_index > 56:
+                                print("Player cannot move, track_index out of range.")
+                                self.next_player(player)
+                                # self.display_turn()
+                            else:
+                                a = False
+
+    def player_move(self, player, opponent1, opponent2, opponent3, cx, cy, out_x0, out_y0):
+        print("#######################{}_player_move_function############".format(player.color))
         print(cx)
         print(cy)
+        print("[x0, x]: ", [player.pawns[0].x0, player.pawns[0].x])
+        print("[y0, y]: ", [player.pawns[0].y0, player.pawns[0].y])
         print([player.pawns[0].x0, player.homes[0].x], [player.pawns[0].y0, player.homes[0].y])
         rolls = Engine.rolls_list
         print("rolls from player_game: ", rolls)
 
-        if Engine.player_turn == player.color:
+        if Engine.player_turn == player.color:  # It's this player's turn (according to it's color)
             for i in range(len(player.pawns)):  # Check if click is made on a pawn
-                nc = 0
-                if ((Engine.cx > player.pawns[i].x0) and (Engine.cx < player.pawns[i].x)):
-                    if ((Engine.cy < player.pawns[i].y0) and (Engine.cy < player.pawns[i].y)):
-                        if ((player.pawns[i].x0 == player.homes[i].x) and (player.pawns[i].y0 == player.homes[i].y)):
-                            print("A click was made on a {} pawn and it is in his home.".format(player.color))
 
-                            if player.rolls[nc] == 6:
-                                player.pawns[i].x0 = player.box_path[0].x
-                                player.pawns[i].y0 = player.box_path[0].y
-                                player.pawns[i].x = player.box_path[0].x + 25
-                                player.pawns[i].y = player.box_path[0].y + 25
-                                player.pawns[i].curr_index = 0  # "placing" pawn on the starting point
-                                player.pawns[i].swap(x_coor=player.pawns[i].x, y_coor=player.pawns[i].y,
-                                                     master=self.canvas)
-                                nc = nc + 1
+                self.move_to_start(player=player, cx=cx, cy=cy, i=i)
 
-                                if nc > len(Engine.rolls_list) - 1:
-                                    self.next_player(player)
-                                    break
+                print("red: ", player.pawns[i].x0, player.pawns[i].y0)
+                print("red: ", player.pawns[i].x, player.pawns[i].y)
 
-                if (Engine.cx > player.pawns[i].x0) and (Engine.cx < player.pawns[i].x):
-                    if ((Engine.cy < player.pawns[i].y0) and (Engine.cy < player.pawns[i].y)):
-                        if ((player.pawns[i].x0 > 270) and (player.pawns[i].y0 == player.homes[i] > 260)):
-                            print("A click was made on a {} pawn and it is outside.".format(player.color))
-                            track_index = player.pawns[i].curr_index + player.rolls[nc]
-
-                            if track_index < 56:
-                                self.kill(player=player, bb=track_index, opponent1=opponent1, opponent2=opponent2,
-                                          opponent3=opponent3)
-                                player.pawns[i].x0 = player.box_path[0].x
-                                player.pawns[i].y0 = player.box_path[0].y
-                                player.pawns[i].x = player.box_path[0].x + 25
-                                player.pawns[i].y = player.box_path[0].y + 25
-                                player.pawns[i].curr_index = 0  # "placing" pawn on the starting point
-                                player.pawns[i].swap(x_coor=player.pawns[i].x, y_coor=player.pawns[i].y,
-                                                     master=self.canvas)
-
-                                self.double_check(player=player)
-                                nc = nc + 1
-
-                            if track_index == 56:
-                                player.pawns.remove(player.pawns[i])
-                                player.num_saved_pawns = player.num_saved_pawns + 1
-                                self.display_turn()
-                                break
-
-                            if track_index > 56:
-                                self.next_player(player)
-                                # self.display_turn()
-                                break
+                self.move_when_out(player=player, opponent1=opponent1, opponent2=opponent2, opponent3=opponent3, cx=cx,
+                                   cy=cy, out_x0=out_x0, out_y0=out_y0, i=i)
 
     def game(self, cx, cy):
 
@@ -323,7 +424,7 @@ class Engine:
 
             if Engine.player_turn == RED:
                 self.player_move(player=self.red_player, opponent1=self.blue_player, opponent2=self.yellow_player,
-                                 opponent3=self.green_player, cx=cx, cy=cy)
+                                 opponent3=self.green_player, cx=cx, cy=cy, out_x0=270, out_y0=270)
 
         if self.player_turn == BLUE and Engine.turn == False:
             print("BLUE player's turn")
@@ -335,8 +436,8 @@ class Engine:
                 self.clean()
 
             if Engine.player_turn == BLUE:
-                self.player_move(player=self.blue_player, opponent1=self.yellow_player, opponent2=self.green_player,
-                                 opponent3=self.red_player, cx=cx, cy=cy)
+                self.player_move(player=self.blue_player, opponent1=self.yellow_player, out_x0=270, out_y0=470,
+                                 opponent2=self.green_player, opponent3=self.red_player, cx=cx, cy=cy)
 
         if self.player_turn == YELLOW and Engine.turn == False:
             print("YELLOW player's turn")
@@ -348,8 +449,8 @@ class Engine:
                 self.clean()
 
             if Engine.player_turn == YELLOW:
-                self.player_move(player=self.yellow_player, opponent1=self.green_player, opponent2=self.red_player,
-                                 opponent3=self.blue_player, cx=cx, cy=cy)
+                self.player_move(player=self.yellow_player, opponent1=self.green_player, out_x0=470, out_y0=470,
+                                 opponent2=self.red_player, opponent3=self.blue_player, cx=cx, cy=cy)
 
         if self.player_turn == GREEN and Engine.turn == False:
             print("GREEN player's turn")
@@ -362,7 +463,7 @@ class Engine:
 
             if Engine.player_turn == GREEN:
                 self.player_move(player=self.green_player, opponent1=self.red_player, opponent2=self.blue_player,
-                                 opponent3=self.yellow_player, cx=cx, cy=cy)
+                                 opponent3=self.yellow_player, cx=cx, cy=cy, out_x0=470, out_y0=470)
 
 
 if __name__ == "__main__":
