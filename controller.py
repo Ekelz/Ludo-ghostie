@@ -45,7 +45,7 @@ class Engine:
 
     def left_click(self, event):
         Engine.cx = self.canvas.winfo_pointerx() - self.canvas.winfo_rootx()
-        Engine.cy = self.canvas.master.winfo_pointery() - self.canvas.master.winfo_rooty()
+        Engine.cy = self.canvas.winfo_pointery() - self.canvas.winfo_rooty()
         print("#########left_click######")
         print("clicked at", Engine.cx, Engine.cy)
 
@@ -58,17 +58,23 @@ class Engine:
         return label
 
     def next_player(self, player):
+        print("__entering next_player function___")
+        print("Before, turn__: ", Engine.player_turn)
         if player.color == RED:
             Engine.player_turn = BLUE
+            print("After, turn__: ", Engine.player_turn)
             self.clean()
         if player.color == BLUE:
             Engine.player_turn = YELLOW
+            print("After, turn__: ", Engine.player_turn)
             self.clean()
         if player.color == YELLOW:
             Engine.player_turn = GREEN
+            print("After, turn__: ", Engine.player_turn)
             self.clean()
         if player.color == GREEN:
             Engine.player_turn = RED
+            print("After, turn__: ", Engine.player_turn)
             self.clean()
 
     # Team turn handlers
@@ -161,13 +167,12 @@ class Engine:
             return False
 
     def kill(self, player, bb, opponent1, opponent2, opponent3):
-
+        print("Entering kill_function")
         # check if the game piece is not on a starting point
-        if player.pawns[bb].x0 != player.white_boxes[1].x and player.pawns[bb].y0 != player.white_boxes[1].y:
-            if player.pawns[bb].x0 != player.white_boxes[14].x and player.pawns[bb].y0 != player.white_boxes[14].y:
-                if player.pawns[bb].x0 != player.white_boxes[27].x and player.pawns[bb].y0 != player.white_boxes[27].y:
-                    if player.pawns[bb].x0 != player.white_boxes[40].x and player.pawns[bb].y0 != player.white_boxes[
-                        40].y:
+        if player.box_path[bb].x0 != player.white_boxes[1].x and player.box_path[bb].y0 != player.white_boxes[1].y:
+            if player.box_path[bb].x0 != player.white_boxes[14].x and player.box_path[bb].y0 != player.white_boxes[14].y:
+                if player.box_path[bb].x0 != player.white_boxes[27].x and player.box_path[bb].y0 != player.white_boxes[27].y:
+                    if player.box_path[bb].x0 != player.white_boxes[40].x and player.box_path[bb].y0 != player.white_boxes[40].y:
 
                         # if the game piece of another color and its on the same block and it is not a double, a
                         # kill is made
@@ -175,7 +180,7 @@ class Engine:
                             if opponent1.pawns[i].x0 == player.pawns[bb].x:
                                 if opponent1.pawns[i].y0 == player.pawns[bb].y:
                                     if not opponent1.pawns[i].double:
-                                        opponent1.box_path[i].x0 = opponent1.homes[i].x
+                                        opponent1.pawns[i].x0 = opponent1.homes[i].x
                                         opponent1.pawns[i].y0 = opponent1.homes[i].y
                                         opponent1.pawns[i].x = opponent1.homes[i].x + 25
                                         opponent1.pawns[i].y = opponent1.homes[i].y + 25
@@ -183,13 +188,14 @@ class Engine:
                                         opponent1.pawns[i].swap(x_coor=opponent1.pawns[i].x,
                                                                 y_coor=opponent1.pawns[i].y,
                                                                 master=self.canvas)
+                                        print("kill made")
                                         break
 
                         for i in range(len(opponent2.pawns)):
                             if opponent2.pawns[i].x0 == player.pawns[bb].x:
                                 if opponent2.pawns[i].y0 == player.pawns[bb].y:
                                     if not opponent2.pawns[i].double:
-                                        opponent2.box_path[i].x0 = opponent2.homes[i].x
+                                        opponent2.pawns[i].x0 = opponent2.homes[i].x
                                         opponent2.pawns[i].y0 = opponent2.homes[i].y
                                         opponent2.pawns[i].x = opponent2.homes[i].x + 25
                                         opponent2.pawns[i].y = opponent2.homes[i].y + 25
@@ -197,13 +203,14 @@ class Engine:
                                         opponent2.pawns[i].swap(x_coor=opponent2.pawns[i].x,
                                                                 y_coor=opponent2.pawns[i].y,
                                                                 master=self.canvas)
+                                        print("kill made")
                                         break
 
                         for i in range(len(opponent3.pawns)):
                             if opponent3.pawns[i].x0 == player.pawns[bb].x:
                                 if opponent3.pawns[i].y0 == player.pawns[bb].y:
                                     if not opponent3.pawns[i].double:
-                                        opponent3.box_path[i].x0 = opponent1.homes[i].x
+                                        opponent3.pawns[i].x0 = opponent1.homes[i].x
                                         opponent3.pawns[i].y0 = opponent1.homes[i].y
                                         opponent3.pawns[i].x = opponent1.homes[i].x + 25
                                         opponent3.pawns[i].y = opponent1.homes[i].y + 25
@@ -211,10 +218,13 @@ class Engine:
                                         opponent3.pawns[i].swap(x_coor=opponent1.pawns[i].x,
                                                                 y_coor=opponent1.pawns[i].y,
                                                                 master=self.canvas)
+                                        print("kill made")
                                         break
+        print("Exiting kill_function")
 
     @staticmethod
     def double_check(player):
+        print("__entering double check function___")
         for i in range(len(player.pawns)):
             player.pawns[i].double = False
 
@@ -224,8 +234,11 @@ class Engine:
                     if j != k:
                         player.pawns[j].double = True
                         player.pawns[k].double = True
+        print("__exiting double check function___")
 
     def clean(self):  # Reset the class and instance's  attributes
+        print("____Entering clean_funtion ______")
+        print("Before cleaning: ",Engine.num_rolls, Engine.rolls_index, Engine.rolls_list, Engine.turn)
         Engine.num_rolls = 0
         Engine.rolls_index = 0
         Engine.rolls_list = []
@@ -242,152 +255,171 @@ class Engine:
             self.label4.config(text="")
         except AttributeError:
             pass
-
+        print("After cleaning: ", Engine.num_rolls, Engine.rolls_index, Engine.rolls_list, Engine.turn)
         print("Cleaned")
         self.display_turn()
 
-    def move_to_start(self, player, cx, cy, i):
-        print("ENTERING move_to_start_function")
-        if ((cx > player.pawns[i].x0 + 13) and (cx < player.pawns[i].x + 13)):  # Check if click is made on a pawn
-            if ((cy > player.pawns[i].y0 + 14) and (cy < player.pawns[i].y + 14)):
-                if ((player.pawns[i].x0 == player.homes[i].x) and (player.pawns[i].y0 == player.homes[i].y)):
-                    print("A click was made on a {} pawn and it is in his home.".format(player.color))
+    # def move_to_start(self, player, cx, cy, i):
+    #     print("ENTERING move_to_start_function")
+    #     if ((cx > player.pawns[i].x0 + 13) and (cx < player.pawns[i].x + 13)):  # Check if click is made on a pawn
+    #         if ((cy > player.pawns[i].y0 + 14) and (cy < player.pawns[i].y + 14)):
+    #             if ((player.pawns[i].x0 == player.homes[i].x) and (player.pawns[i].y0 == player.homes[i].y)):
+    #                 print("A click was made on a {} pawn and it is in his home.".format(player.color))
+    #
+    #                 if Engine.rolls_list[Engine.rolls_index] == 6:
+    #                     player.pawns[i].x0 = player.box_path[0].x
+    #                     player.pawns[i].y0 = player.box_path[0].y
+    #                     player.pawns[i].x = player.box_path[0].x + 25
+    #                     player.pawns[i].y = player.box_path[0].y + 25
+    #                     player.pawns[i].curr_index = 0  # "placing" pawn on the starting point
+    #                     print("player.pawns[{}].curr_index: {}".format(i, player.pawns[i].curr_index))
+    #                     player.pawns[i].swap(x_coor=player.pawns[i].x, y_coor=player.pawns[i].y,
+    #                                          master=self.canvas)
+    #                     Engine.rolls_index = Engine.rolls_index + 1
+    #                     print("FROM move_to_start_function:", Engine.rolls_index)
+    #
+    #                     a = True
+    #                     while a:
+    #                         if Engine.rolls_index > len(Engine.rolls_list) - 1:
+    #                             self.next_player(player)
+    #                         else:
+    #                             a = False
+    #     print("EXITING move_to_start_function")
 
-                    if Engine.rolls_list[Engine.rolls_index] == 6:
-                        player.pawns[i].x0 = player.box_path[0].x
-                        player.pawns[i].y0 = player.box_path[0].y
-                        player.pawns[i].x = player.box_path[0].x + 25
-                        player.pawns[i].y = player.box_path[0].y + 25
-                        player.pawns[i].curr_index = 0  # "placing" pawn on the starting point
-                        print("player.pawns[{}].curr_index: {}".format(i, player.pawns[i].curr_index))
-                        player.pawns[i].swap(x_coor=player.pawns[i].x, y_coor=player.pawns[i].y,
-                                             master=self.canvas)
-                        Engine.rolls_index = Engine.rolls_index + 1
-                        print("FROM move_to_start_function:", Engine.rolls_index)
-
-                        a = True
-                        while a:
-                            if Engine.rolls_index > len(Engine.rolls_list) - 1:
-                                self.next_player(player)
-                            else:
-                                a = False
-        print("EXITING move_to_start_function")
-
-    def move_when_out(self, player, opponent1, opponent2, opponent3, cx, cy, out_x0, out_y0, i):
-        print("ENTERING move_when_out_function")
-        print("player's color: ", player.color)
-        if player.color == RED:
-            print("In move_when_out_function with color: ", player.color)
-            if (cx > player.pawns[i].x0) and (cx < player.pawns[i].x):
-                if (cy > player.pawns[i].y0) and (cy < player.pawns[i].y):
-                    if (player.pawns[i].x0 > out_x0) or (player.pawns[i].y0 > out_y0):
-                        print("A click was made on a {} pawn and it is outside.".format(player.color))
-                        track_index = player.pawns[i].curr_index + Engine.rolls_list[Engine.rolls_index]
-                        print("Engine.rolls_list[Engine.rolls_index]: ", Engine.rolls_list[Engine.rolls_index])
-                        print("track_index: ", track_index)
-
-                        if track_index < 56:
-                            self.kill(player=player, bb=track_index, opponent1=opponent1, opponent2=opponent2,
-                                      opponent3=opponent3)
-                            player.pawns[i].x0 = player.box_path[0].x
-                            player.pawns[i].y0 = player.box_path[0].y
-                            player.pawns[i].x = player.box_path[0].x + 25
-                            player.pawns[i].y = player.box_path[0].y + 25
-                            player.pawns[i].curr_index = 0  # "placing" pawn on the starting point
-                            print("player.pawns[{}].curr_index: {}".format(i, player.pawns[i].curr_index))
-                            player.pawns[i].swap(x_coor=player.pawns[i].x, y_coor=player.pawns[i].y,
-                                                 master=self.canvas)
-
-                            self.double_check(player=player)
-                            Engine.rolls_index = Engine.rolls_index + 1
-
-                        if track_index == 56:
-                            player.pawns.remove(player.pawns[i])
-                            player.num_saved_pawns = player.num_saved_pawns + 1
-                            self.display_turn()
-
-                        a = True
-                        while a:
-                            if track_index > 56:
-                                print("Player cannot move, track_index out of range.")
-                                self.next_player(player)
-                                # self.display_turn()
-                            else:
-                                a = False
-
-        if player.color == BLUE:
-            print("In move_when_out_function with color: ", player.color)
-            if (cx > player.pawns[i].x0) and (cx < player.pawns[i].x):
-                if (cy > player.pawns[i].y0) and (cy < player.pawns[i].y):
-                    if (player.pawns[i].x0 > out_x0) or (player.pawns[i].y0 < out_y0):
-                        print("A click was made on a {} pawn and it is outside.".format(player.color))
-                        track_index = player.pawns[i].curr_index + player.rolls[Engine.rolls_index]
-
-                        if track_index < 56:
-                            self.kill(player=player, bb=track_index, opponent1=opponent1, opponent2=opponent2,
-                                      opponent3=opponent3)
-                            player.pawns[i].x0 = player.box_path[0].x
-                            player.pawns[i].y0 = player.box_path[0].y
-                            player.pawns[i].x = player.box_path[0].x + 25
-                            player.pawns[i].y = player.box_path[0].y + 25
-                            player.pawns[i].curr_index = 0  # "placing" pawn on the starting point
-                            print("player.pawns[{}].curr_index: {}".format(i, player.pawns[i].curr_index))
-                            player.pawns[i].swap(x_coor=player.pawns[i].x, y_coor=player.pawns[i].y,
-                                                 master=self.canvas)
-
-                            self.double_check(player=player)
-                            Engine.rolls_index = Engine.rolls_index + 1
-
-                        if track_index == 56:
-                            player.pawns.remove(player.pawns[i])
-                            player.num_saved_pawns = player.num_saved_pawns + 1
-                            self.display_turn()
-
-                        a = True
-                        while a:
-                            if track_index > 56:
-                                print("Player cannot move, track_index out of range.")
-                                self.next_player(player)
-                                # self.display_turn()
-                            else:
-                                a = False
-
-        if player.color == YELLOW or player.color == GREEN:
-            print("In move_when_out_function with color: ", player.color)
-            if (cx > player.pawns[i].x0) and (cx < player.pawns[i].x):
-                if (cy > player.pawns[i].y0) and (cy < player.pawns[i].y):
-                    if (player.pawns[i].x0 < out_x0) or (player.pawns[i].y0 < out_y0):
-                        print("A click was made on a {} pawn and it is outside.".format(player.color))
-                        track_index = player.pawns[i].curr_index + player.rolls[Engine.rolls_index]
-
-                        if track_index < 56:
-                            self.kill(player=player, bb=track_index, opponent1=opponent1, opponent2=opponent2,
-                                      opponent3=opponent3)
-                            player.pawns[i].x0 = player.box_path[0].x
-                            player.pawns[i].y0 = player.box_path[0].y
-                            player.pawns[i].x = player.box_path[0].x + 25
-                            player.pawns[i].y = player.box_path[0].y + 25
-                            player.pawns[i].curr_index = 0  # "placing" pawn on the starting point
-                            print("player.pawns[{}].curr_index: {}".format(i, player.pawns[i].curr_index))
-                            player.pawns[i].swap(x_coor=player.pawns[i].x, y_coor=player.pawns[i].y,
-                                                 master=self.canvas)
-
-                            self.double_check(player=player)
-                            Engine.rolls_index = Engine.rolls_index + 1
-
-                        if track_index == 56:
-                            player.pawns.remove(player.pawns[i])
-                            player.num_saved_pawns = player.num_saved_pawns + 1
-                            self.display_turn()
-
-                        a = True
-                        while a:
-                            if track_index > 56:
-                                print("Player cannot move, track_index out of range.")
-                                self.next_player(player)
-                                # self.display_turn()
-                            else:
-                                a = False
+    # def move_when_out(self, player, opponent1, opponent2, opponent3, cx, cy, out_x0, out_y0, i):
+    #     print("ENTERING move_when_out_function")
+    #     print("player's color: ", player.color)
+    #     if player.color == RED:
+    #         print("In move_when_out_function with color: ", player.color)
+    #         print("cx: ", cx)
+    #         print("cy: ", cy)
+    #         print("[player.pawns[{}].x0, player.pawns[{}].x]".format(i, i), [player.pawns[i].x0, player.pawns[i].x])
+    #         print("[player.pawns[{}].y0, player.pawns[{}].y]".format(i, i), [player.pawns[i].y0, player.pawns[i].y])
+    #         if (cx > player.pawns[i].x0) and (cx < player.pawns[i].x):
+    #             if (cy > player.pawns[i].y0) and (cy < player.pawns[i].y):
+    #                 if (player.pawns[i].x0 > out_x0) or (player.pawns[i].y0 > out_y0):
+    #                     print("A click was made on a {} pawn and it is outside.".format(player.color))
+    #                     print("Engine.rolls_index: ", Engine.rolls_index)
+    #                     track_index = player.pawns[i].curr_index + Engine.rolls_list[Engine.rolls_index]
+    #                     print("Engine.rolls_list[Engine.rolls_index]: ", Engine.rolls_list[Engine.rolls_index])
+    #                     print("track_index: ", track_index)
+    #
+    #                     if track_index < 56:
+    #                         self.kill(player=player, bb=track_index, opponent1=opponent1, opponent2=opponent2,
+    #                                   opponent3=opponent3)
+    #                         player.pawns[i].x0 = player.box_path[0].x
+    #                         player.pawns[i].y0 = player.box_path[0].y
+    #                         player.pawns[i].x = player.box_path[0].x + 25
+    #                         player.pawns[i].y = player.box_path[0].y + 25
+    #                         player.pawns[i].curr_index = 0  # "placing" pawn on the starting point
+    #                         print("player.pawns[{}].curr_index: {}".format(i, player.pawns[i].curr_index))
+    #                         player.pawns[i].swap(x_coor=player.pawns[i].x, y_coor=player.pawns[i].y,
+    #                                              master=self.canvas)
+    #
+    #                         self.double_check(player=player)
+    #                         Engine.rolls_index = Engine.rolls_index + 1
+    #
+    #                     if track_index == 56:
+    #                         player.pawns.remove(player.pawns[i])
+    #                         player.num_saved_pawns = player.num_saved_pawns + 1
+    #                         self.display_turn()
+    #
+    #                     a = True
+    #                     while a:
+    #                         if track_index > 56:
+    #                             print("Player cannot move, track_index out of range.")
+    #                             self.next_player(player)
+    #                             # self.display_turn()
+    #                         else:
+    #                             a = False
+    #
+    #     if player.color == BLUE:
+    #         print("In move_when_out_function with color: ", player.color)
+    #         print("cx: ", cx)
+    #         print("cy: ", cy)
+    #         print("[player.pawns[{}].x0, player.pawns[{}].x]".format(i, i), [player.pawns[i].x0, player.pawns[i].x])
+    #         print("[player.pawns[{}].y0, player.pawns[{}].y]".format(i, i), [player.pawns[i].y0, player.pawns[i].y])
+    #         if (cx > player.pawns[i].x0) and (cx < player.pawns[i].x):
+    #             if (cy > player.pawns[i].y0) and (cy < player.pawns[i].y):
+    #                 if (player.pawns[i].x0 > out_x0) or (player.pawns[i].y0 < out_y0):
+    #                     print("A click was made on a {} pawn and it is outside.".format(player.color))
+    #                     print("Engine.rolls_index: ", Engine.rolls_index)
+    #                     track_index = player.pawns[i].curr_index + player.rolls[Engine.rolls_index]
+    #                     print("Engine.rolls_list[Engine.rolls_index]: ", Engine.rolls_list[Engine.rolls_index])
+    #                     print("track_index: ", track_index)
+    #
+    #                     if track_index < 56:
+    #                         self.kill(player=player, bb=track_index, opponent1=opponent1, opponent2=opponent2,
+    #                                   opponent3=opponent3)
+    #                         player.pawns[i].x0 = player.box_path[0].x
+    #                         player.pawns[i].y0 = player.box_path[0].y
+    #                         player.pawns[i].x = player.box_path[0].x + 25
+    #                         player.pawns[i].y = player.box_path[0].y + 25
+    #                         player.pawns[i].curr_index = 0  # "placing" pawn on the starting point
+    #                         print("player.pawns[{}].curr_index: {}".format(i, player.pawns[i].curr_index))
+    #                         player.pawns[i].swap(x_coor=player.pawns[i].x, y_coor=player.pawns[i].y,
+    #                                              master=self.canvas)
+    #
+    #                         self.double_check(player=player)
+    #                         Engine.rolls_index = Engine.rolls_index + 1
+    #
+    #                     if track_index == 56:
+    #                         player.pawns.remove(player.pawns[i])
+    #                         player.num_saved_pawns = player.num_saved_pawns + 1
+    #                         self.display_turn()
+    #
+    #                     a = True
+    #                     while a:
+    #                         if track_index > 56:
+    #                             print("Player cannot move, track_index out of range.")
+    #                             self.next_player(player)
+    #                             # self.display_turn()
+    #                         else:
+    #                             a = False
+    #
+    #     if player.color == YELLOW or player.color == GREEN:
+    #         print("In move_when_out_function with color: ", player.color)
+    #         print("cx: ", cx)
+    #         print("cy: ", cy)
+    #         print("[player.pawns[{}].x0, player.pawns[{}].x]".format(i,i), [player.pawns[i].x0, player.pawns[i].x])
+    #         print("[player.pawns[{}].y0, player.pawns[{}].y]".format(i, i), [player.pawns[i].y0, player.pawns[i].y])
+    #         if (cx > player.pawns[i].x0) and (cx < player.pawns[i].x):
+    #             if (cy > player.pawns[i].y0) and (cy < player.pawns[i].y):
+    #                 if (player.pawns[i].x0 < out_x0) or (player.pawns[i].y0 < out_y0):
+    #                     print("A click was made on a {} pawn and it is outside.".format(player.color))
+    #                     print("Engine.rolls_index: ", Engine.rolls_index)
+    #                     track_index = player.pawns[i].curr_index + player.rolls[Engine.rolls_index]
+    #                     print("Engine.rolls_list[Engine.rolls_index]: ", Engine.rolls_list[Engine.rolls_index])
+    #                     print("track_index: ", track_index)
+    #
+    #                     if track_index < 56:
+    #                         self.kill(player=player, bb=track_index, opponent1=opponent1, opponent2=opponent2,
+    #                                   opponent3=opponent3)
+    #                         player.pawns[i].x0 = player.box_path[0].x
+    #                         player.pawns[i].y0 = player.box_path[0].y
+    #                         player.pawns[i].x = player.box_path[0].x + 25
+    #                         player.pawns[i].y = player.box_path[0].y + 25
+    #                         player.pawns[i].curr_index = 0  # "placing" pawn on the starting point
+    #                         print("player.pawns[{}].curr_index: {}".format(i, player.pawns[i].curr_index))
+    #                         player.pawns[i].swap(x_coor=player.pawns[i].x, y_coor=player.pawns[i].y,
+    #                                              master=self.canvas)
+    #
+    #                         self.double_check(player=player)
+    #                         Engine.rolls_index = Engine.rolls_index + 1
+    #
+    #                     if track_index == 56:
+    #                         player.pawns.remove(player.pawns[i])
+    #                         player.num_saved_pawns = player.num_saved_pawns + 1
+    #                         self.display_turn()
+    #
+    #                     a = True
+    #                     while a:
+    #                         if track_index > 56:
+    #                             print("Player cannot move, track_index out of range.")
+    #                             self.next_player(player)
+    #                             # self.display_turn()
+    #                         else:
+    #                             a = False
 
     def player_move(self, player, opponent1, opponent2, opponent3, cx, cy, out_x0, out_y0):
         print("#######################{}_player_move_function############".format(player.color))
@@ -401,14 +433,205 @@ class Engine:
 
         if Engine.player_turn == player.color:  # It's this player's turn (according to it's color)
             for i in range(len(player.pawns)):  # Check if click is made on a pawn
+                print("ENTERING move_to_start_function")
+                if ((cx > player.pawns[i].x0 + 13) and (cx < player.pawns[i].x + 13)):  # Check if click is made on a pawn
+                    print("on start 1")
+                    if ((cy > player.pawns[i].y0 + 14) and (cy < player.pawns[i].y + 14)):
+                        print("on start 2")
+                        if ((player.pawns[i].x0 == player.homes[i].x) and (player.pawns[i].y0 == player.homes[i].y)):
+                            print("A click was made on a {} pawn and it is in his home.".format(player.color))
 
-                self.move_to_start(player=player, cx=cx, cy=cy, i=i)
+                            if Engine.rolls_list[Engine.rolls_index] == 6:
+                                player.pawns[i].x0 = player.box_path[0].x
+                                player.pawns[i].y0 = player.box_path[0].y
+                                player.pawns[i].x = player.box_path[0].x + 25
+                                player.pawns[i].y = player.box_path[0].y + 25
+                                player.pawns[i].curr_index = 0  # "placing" pawn on the starting point
+                                print("player.pawns[{}].curr_index: {}".format(i, player.pawns[i].curr_index))
+                                player.pawns[i].swap(x_coor=player.pawns[i].x, y_coor=player.pawns[i].y,
+                                                     master=self.canvas)
+                                Engine.rolls_index = Engine.rolls_index + 1
+                                print("FROM move_to_start_function:", Engine.rolls_index)
 
-                print("red: ", player.pawns[i].x0, player.pawns[i].y0)
-                print("red: ", player.pawns[i].x, player.pawns[i].y)
+                                if Engine.rolls_index > len(Engine.rolls_list) - 1:
+                                    self.next_player(player)
+                                break
 
-                self.move_when_out(player=player, opponent1=opponent1, opponent2=opponent2, opponent3=opponent3, cx=cx,
-                                   cy=cy, out_x0=out_x0, out_y0=out_y0, i=i)
+                # print("red: ", player.pawns[i].x0, player.pawns[i].y0)
+                # print("red: ", player.pawns[i].x, player.pawns[i].y)
+
+                print("ENTERING move_when_out_function")
+                print("player's color: ", player.color)
+                if player.color == RED:
+                    print("In move_when_out_function with color: ", player.color)
+                    print("cx: ", cx)
+                    print("cy: ", cy)
+                    print("[player.pawns[{}].x0, player.pawns[{}].x]".format(i, i), [player.pawns[i].x0, player.pawns[i].x])
+                    print("[player.pawns[{}].y0, player.pawns[{}].y]".format(i, i), [player.pawns[i].y0, player.pawns[i].y])
+                    if (cx > player.pawns[i].x0 + 13) and (cx < player.pawns[i].x + 13):
+                        print("out 1")
+                        if (cy > player.pawns[i].y0 + 14) and (cy < player.pawns[i].y + 14):
+                            print("out 2")
+                            if (player.pawns[i].x0 > out_x0) or (player.pawns[i].y0 > out_y0):
+                                print("out 3")
+                                print("A click was made on a {} pawn and it is outside.".format(player.color))
+                                print("Engine.rolls_index: ", Engine.rolls_index)
+                                track_index = player.pawns[i].curr_index + Engine.rolls_list[Engine.rolls_index]
+                                print("Engine.rolls_list[Engine.rolls_index]: ", Engine.rolls_list[Engine.rolls_index])
+                                print("track_index: ", track_index)
+
+                                if track_index < 56:
+                                    print("track_index<56")
+                                    self.kill(player=player, bb=track_index, opponent1=opponent1, opponent2=opponent2,
+                                              opponent3=opponent3)
+                                    player.pawns[i].x0 = player.box_path[track_index].x
+                                    player.pawns[i].y0 = player.box_path[track_index].y
+                                    player.pawns[i].x = player.box_path[track_index].x + 25
+                                    player.pawns[i].y = player.box_path[track_index].y + 25
+                                    player.pawns[i].curr_index = track_index  # updating the pawn position on board
+                                    print("player.pawns[{}].curr_index: {}".format(i, player.pawns[i].curr_index))
+                                    player.pawns[i].swap(x_coor=player.pawns[i].x0, y_coor=player.pawns[i].y0,
+                                                         master=self.canvas)
+
+                                    self.double_check(player=player)
+                                    Engine.rolls_index = Engine.rolls_index + 1
+
+                                    print(" in player_move_function: ", Engine.rolls_index)
+
+                                if track_index == 56:
+                                    player.pawns.remove(player.pawns[i])
+                                    player.num_saved_pawns = player.num_saved_pawns + 1
+                                    self.next_player(player)
+                                    self.display_turn()
+
+                                # a = True
+                                # while a:
+                                if track_index > 56:
+                                    print("Player cannot move, track_index out of range.")
+                                    self.next_player(player)
+                                    break
+                                    # self.display_turn()
+                                    # else:
+                                    #     a = False
+                                if Engine.rolls_index > len(Engine.rolls_list) - 1:
+                                    print("next player turn (in player move function)")
+                                    self.next_player(player)
+                                break
+
+
+                if player.color == BLUE:
+                    print("In move_when_out_function with color: ", player.color)
+                    print("cx: ", cx)
+                    print("cy: ", cy)
+                    print("[player.pawns[{}].x0, player.pawns[{}].x]".format(i, i),
+                          [player.pawns[i].x0, player.pawns[i].x])
+                    print("[player.pawns[{}].y0, player.pawns[{}].y]".format(i, i),
+                          [player.pawns[i].y0, player.pawns[i].y])
+                    if (cx > player.pawns[i].x0 +13) and (cx < player.pawns[i].x+13):
+                        print("out 1")
+                        if (cy > player.pawns[i].y0+14) and (cy < player.pawns[i].y+14):
+                            print("out 2")
+                            if (player.pawns[i].x0 > out_x0) or (player.pawns[i].y0 < out_y0):
+                                print("out 3")
+                                print("A click was made on a {} pawn and it is outside.".format(player.color))
+                                print("Engine.rolls_index: ", Engine.rolls_index)
+                                track_index = player.pawns[i].curr_index + player.rolls[Engine.rolls_index]
+                                print("Engine.rolls_list[Engine.rolls_index]: ", Engine.rolls_list[Engine.rolls_index])
+                                print("track_index: ", track_index)
+
+                                if track_index < 56:
+                                    self.kill(player=player, bb=track_index, opponent1=opponent1, opponent2=opponent2,
+                                              opponent3=opponent3)
+                                    player.pawns[i].x0 = player.box_path[track_index].x
+                                    player.pawns[i].y0 = player.box_path[track_index].y
+                                    player.pawns[i].x = player.box_path[track_index].x + 25
+                                    player.pawns[i].y = player.box_path[track_index].y + 25
+                                    player.pawns[i].curr_index = track_index  # updating the pawn position on board
+                                    print("player.pawns[{}].curr_index: {}".format(i, player.pawns[i].curr_index))
+                                    player.pawns[i].swap(x_coor=player.pawns[i].x0, y_coor=player.pawns[i].y0,
+                                                         master=self.canvas)
+
+                                    self.double_check(player=player)
+                                    Engine.rolls_index = Engine.rolls_index + 1
+
+                                    print(" in player_move_function: ", Engine.rolls_index)
+
+                                if track_index == 56:
+                                    player.pawns.remove(player.pawns[i])
+                                    player.num_saved_pawns = player.num_saved_pawns + 1
+                                    self.next_player(player)
+                                    self.display_turn()
+
+                                    # a = True
+                                    # while a:
+                                if track_index > 56:
+                                    print("Player cannot move, track_index out of range.")
+                                    self.next_player(player)
+                                    break
+                                    # self.display_turn()
+                                    # else:
+                                    #     a = False
+                                if Engine.rolls_index > len(Engine.rolls_list) - 1:
+                                    print("next player turn (in player move function)")
+                                    self.next_player(player)
+                                break
+
+                if player.color == YELLOW or player.color == GREEN:
+                    print("In move_when_out_function with color: ", player.color)
+                    print("cx: ", cx)
+                    print("cy: ", cy)
+                    print("[player.pawns[{}].x0, player.pawns[{}].x]".format(i, i),
+                          [player.pawns[i].x0, player.pawns[i].x])
+                    print("[player.pawns[{}].y0, player.pawns[{}].y]".format(i, i),
+                          [player.pawns[i].y0, player.pawns[i].y])
+                    if (cx > player.pawns[i].x0+13) and (cx < player.pawns[i].x+13):
+                        print("out 1")
+                        if (cy > player.pawns[i].y0+14) and (cy < player.pawns[i].y+14):
+                            print("out 2")
+                            if (player.pawns[i].x0 < out_x0) or (player.pawns[i].y0 < out_y0):
+                                print("out 3")
+                                print("A click was made on a {} pawn and it is outside.".format(player.color))
+                                print("Engine.rolls_index: ", Engine.rolls_index)
+                                track_index = player.pawns[i].curr_index + player.rolls[Engine.rolls_index]
+                                print("Engine.rolls_list[Engine.rolls_index]: ", Engine.rolls_list[Engine.rolls_index])
+                                print("track_index: ", track_index)
+
+                                if track_index < 56:
+                                    self.kill(player=player, bb=track_index, opponent1=opponent1, opponent2=opponent2,
+                                              opponent3=opponent3)
+                                    player.pawns[i].x0 = player.box_path[track_index].x
+                                    player.pawns[i].y0 = player.box_path[track_index].y
+                                    player.pawns[i].x = player.box_path[track_index].x + 25
+                                    player.pawns[i].y = player.box_path[track_index].y + 25
+                                    player.pawns[i].curr_index = track_index  # updating the pawn position on board
+                                    print("player.pawns[{}].curr_index: {}".format(i, player.pawns[i].curr_index))
+                                    player.pawns[i].swap(x_coor=player.pawns[i].x0, y_coor=player.pawns[i].y0,
+                                                         master=self.canvas)
+
+                                    self.double_check(player=player)
+                                    Engine.rolls_index = Engine.rolls_index + 1
+
+                                    print(" in player_move_function: ", Engine.rolls_index)
+
+                                if track_index == 56:
+                                    player.pawns.remove(player.pawns[i])
+                                    player.num_saved_pawns = player.num_saved_pawns + 1
+                                    self.next_player(player)
+                                    self.display_turn()
+
+                                    # a = True
+                                    # while a:
+                                if track_index > 56:
+                                    print("Player cannot move, track_index out of range.")
+                                    self.next_player(player)
+                                    break
+                                    # self.display_turn()
+                                    # else:
+                                    #     a = False
+                                if Engine.rolls_index > len(Engine.rolls_list) - 1:
+                                    print("next player turn (in player move function)")
+                                    self.next_player(player)
+                                break
 
     def game(self, cx, cy):
 
