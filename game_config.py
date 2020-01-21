@@ -7,7 +7,7 @@ BOARD_WIDTH = 1000
 BOARD_HEIGHT = 750
 
 # Font
-LARGE_FONT = ("Verdana", 24, "bold")
+LARGE_FONT = ("Verdana", 22, "bold")
 
 dossier_racine = "./img_gif/"
 

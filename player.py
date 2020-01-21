@@ -10,8 +10,15 @@ from tkinter import ttk
 class Player:
 
     def __init__(self, master, image_file_path, color, width, height, turn=False):  # roll,
+
         self.color = color
         self.master = master
+        self.num_saved_pawns = 0
+        self.win = False
+
+        # self.turn = turn
+        # self.roll = roll  # a list
+        # self.rolls = [0, 0, 0]
 
         # Initialisation of the lists of coordinates of the game pieces
         if color == RED:
@@ -47,23 +54,17 @@ class Player:
 
         # Initialisation of the path (the lists represent the "path" on the board for each game piece according to its color
         if color == RED:
-            self.box_path = self.init_list_box_path(image_file_path=image_file_path, width=width, height=height, master=master,
-                                                 corresp_index=1)
+            self.box_path = self.init_list_box_path(image_file_path=image_file_path, width=width, height=height,
+                                                    master=master, corresp_index=1)
         if color == BLUE:
-            self.box_path = self.init_list_box_path(image_file_path=image_file_path, width=width, height=height, master=master,
-                                                 corresp_index=40)
+            self.box_path = self.init_list_box_path(image_file_path=image_file_path, width=width, height=height,
+                                                    master=master, corresp_index=40)
         if color == YELLOW:
-            self.box_path = self.init_list_box_path(image_file_path=image_file_path, width=width, height=height, master=master,
-                                                 corresp_index=27)
+            self.box_path = self.init_list_box_path(image_file_path=image_file_path, width=width, height=height,
+                                                    master=master, corresp_index=27)
         if color == GREEN:
-            self.box_path = self.init_list_box_path(image_file_path=image_file_path, width=width, height=height, master=master,
-                                                 corresp_index=14)
-
-        self.turn = turn
-        #self.roll = roll  # a list
-        self.num_saved_pawns = 0
-        self.rolls = [0, 0, 0]
-        self.win = False
+            self.box_path = self.init_list_box_path(image_file_path=image_file_path, width=width, height=height,
+                                                    master=master, corresp_index=14)
 
     def init_pawns(self, image_file_path, width, height, master, ref_x, ref_y, size):
         pawns = []
@@ -74,13 +75,13 @@ class Player:
             pawns[i].y0 = ref_y
             pawns[i].x = pawns[i].x0 + size
             pawns[i].y = pawns[i].y0 + size
-            pawns[i].swap(x_coor=pawns[i].x, y_coor=pawns[i].y, master=self.master)
+            pawns[i].swap()
         for i in range(2, 4):
             pawns[i].x0 = ref_x + (100 * (i - 2))
             pawns[i].y0 = ref_y + 100
             pawns[i].x = pawns[i].x0 + size
             pawns[i].y = pawns[i].y0 + size
-            pawns[i].swap(x_coor=pawns[i].x, y_coor=pawns[i].y, master=self.master)
+            pawns[i].swap()
         return pawns
 
     @staticmethod
