@@ -155,7 +155,7 @@ class Engine:
         print("rolls from rolls' function: ", Engine.rolls_list)
 
     def check_move(self, player):  # Check if the player can make a move
-        print("##############check_move#############")
+        print("##############in_check_move#############")
         a = all(roll == 6 for roll in Engine.rolls_list)
         print("check if 3 6 in a roll, dices: ", a)
         if a == True:  # check if he rolled 6 3 times
@@ -168,8 +168,8 @@ class Engine:
         if (win == False) and (Engine.rolls_list[0] != 6):
             print(len(player.pawns))
             for i in range(len(player.pawns)):
-                print("player.pawns[{}].curr_index : ".format(i, player.pawns[i].curr_index))
-                print("In check_move: ", player.pawns[i].curr_index)
+                a = player.pawns[i].curr_index
+                print("In check_move: \n player.pawns[{", i, "}].curr_index : ", a)
                 if player.pawns[i].curr_index != -1:
                     print("The player can move his avalaible pawns.")
                     return True
@@ -283,18 +283,17 @@ class Engine:
         print("[x0, x]: ", [player.pawns[0].x0, player.pawns[0].x])
         print("[y0, y]: ", [player.pawns[0].y0, player.pawns[0].y])
         print([player.pawns[0].x0, player.homes[0].x], [player.pawns[0].y0, player.homes[0].y])
-        rolls = Engine.rolls_list
-        print("rolls from player_game: ", rolls)
+        # rolls = Engine.rolls_list
+        # print("rolls from player_game: ", rolls)
 
         if Engine.player_turn == player.color:  # It's this player's turn (according to it's color)
             for i in range(len(player.pawns)):  # Check if click is made on a pawn
                 print("ENTERING move_to_start_function")
-                if ((cx > player.pawns[i].x0 + 13) and (
-                        cx < player.pawns[i].x + 13)):  # Check if click is made on a pawn
+                if (cx > player.pawns[i].x0 + 13) and (cx < player.pawns[i].x + 13):  # Check if click is made on a pawn
                     print("on start 1")
-                    if ((cy > player.pawns[i].y0 + 14) and (cy < player.pawns[i].y + 14)):
+                    if (cy > player.pawns[i].y0 + 14) and (cy < player.pawns[i].y + 14):
                         print("on start 2")
-                        if ((player.pawns[i].x0 == player.homes[i].x) and (player.pawns[i].y0 == player.homes[i].y)):
+                        if (player.pawns[i].x0 == player.homes[i].x) and (player.pawns[i].y0 == player.homes[i].y):
                             print("A click was made on a {} pawn and it is in his home.".format(player.color))
 
                             if Engine.rolls_list[Engine.rolls_index] == 6:
@@ -311,9 +310,6 @@ class Engine:
                                 if Engine.rolls_index > len(Engine.rolls_list) - 1:
                                     self.next_player(player)
                                 break
-
-                # print("red: ", player.pawns[i].x0, player.pawns[i].y0)
-                # print("red: ", player.pawns[i].x, player.pawns[i].y)
 
                 print("ENTERING move_when_out_function")
                 print("player's color: ", player.color)
@@ -345,9 +341,9 @@ class Engine:
                                     player.pawns[i].y0 = player.box_path[track_index].y
                                     player.pawns[i].x = player.box_path[track_index].x + 25
                                     player.pawns[i].y = player.box_path[track_index].y + 25
-                                    player.pawns[i].curr_index = track_index  # updating the pawn position on board
+                                    player.pawns[i].curr_index = track_index
                                     print("player.pawns[{}].curr_index: {}".format(i, player.pawns[i].curr_index))
-                                    player.pawns[i].swap()
+                                    player.pawns[i].swap()  # updating the pawn position on board
 
                                     self.double_check(player=player)
                                     Engine.rolls_index = Engine.rolls_index + 1
@@ -472,15 +468,11 @@ class Engine:
                                     self.next_player(player)
                                     self.display_turn()
 
-                                    # a = True
-                                    # while a:
                                 if track_index > 56:
                                     print("Player cannot move, track_index out of range.")
                                     self.next_player(player)
                                     break
-                                    # self.display_turn()
-                                    # else:
-                                    #     a = False
+
                                 if Engine.rolls_index > len(Engine.rolls_list) - 1:
                                     print("next player turn (in player move function)")
                                     self.next_player(player)
@@ -545,45 +537,10 @@ class Engine:
         tk.messagebox.showinfo("Save game",  'Do you want to save the game? Press "OK" if yes.')
         saved_data = [{"player_turn": Engine.player_turn}]
 
-        red_player = {
-            "color": self.red_player.color,
-            "num_saved_pawns": self.red_player.num_saved_pawns,
-            "pawns": []
-        }
-        for pawn in self.red_player.pawns:
-            m = dict(x0_y0=[pawn.x0, pawn.y0], x_y=[pawn.x, pawn.y], curr_index=pawn.curr_index, out=pawn.out,
-                     double=pawn.double)
-            red_player["pawns"].append(m)
-
-        blue_player = {
-            "color": self.blue_player.color,
-            "num_saved_pawns": self.blue_player.num_saved_pawns,
-            "pawns": []
-        }
-        for pawn in self.blue_player.pawns:
-            m = dict(x0_y0=[pawn.x0, pawn.y0], x_y=[pawn.x, pawn.y], curr_index=pawn.curr_index, out=pawn.out,
-                     double=pawn.double)
-            blue_player["pawns"].append(m)
-
-        yellow_player = {
-            "color": self.yellow_player.color,
-            "num_saved_pawns": self.yellow_player.num_saved_pawns,
-            "pawns": []
-        }
-        for pawn in self.yellow_player.pawns:
-            m = dict(x0_y0=[pawn.x0, pawn.y0], x_y=[pawn.x, pawn.y], curr_index=pawn.curr_index, out=pawn.out,
-                     double=pawn.double)
-            yellow_player["pawns"].append(m)
-
-        green_player = {
-            "color": self.green_player.color,
-            "num_saved_pawns": self.green_player.num_saved_pawns,
-            "pawns": []
-        }
-        for pawn in self.green_player.pawns:
-            m = dict(x0_y0=[pawn.x0, pawn.y0], x_y=[pawn.x, pawn.y], curr_index=pawn.curr_index, out=pawn.out,
-                     double=pawn.double)
-            green_player["pawns"].append(m)
+        red_player = saved_data(self.red_player)
+        blue_player = saved_data(self.blue_player)
+        yellow_player = saved_data(self.yellow_player)
+        green_player = saved_data(self.green_player)
 
         saved_data.append(red_player)
         saved_data.append(blue_player)
@@ -595,9 +552,18 @@ class Engine:
 
         self.canvas.master.quit()
 
-    def exit(self):
-        tk.messagebox.showinfo("Exit game", "It's shame... Why quitting now? Play with us a little bit more... please...")
-        self.canvas.master.quit()
+    @staticmethod
+    def save_data(player):
+        dico = {
+            "color": player.color,
+            "num_saved_pawns": player.num_saved_pawns,
+            "pawns": []
+        }
+
+        for pawn in player.pawn:
+            m = dict(x0_y0=[pawn.x0, pawn.y0], x_y=[pawn.x, pawn.y], curr_index=pawn.curr_index, double=pawn.double)
+            dico["pawns"].append(m)
+        return dico
 
     def load(self):  # load the most recent game
         tk.messagebox.showinfo("Load game", "Are you sure? ")
@@ -633,6 +599,10 @@ class Engine:
             pawn.double = dico["pawns"][i]["double"]
             pawn.swap()
             i = i + 1
+
+    def exit(self):
+        tk.messagebox.showinfo("Exit game", "You are quitting... :(")
+        self.canvas.master.quit()
 
 
 if __name__ == "__main__":

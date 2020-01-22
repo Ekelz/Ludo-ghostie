@@ -15,7 +15,7 @@ class Box:
         self.x0 = x0
         self.y0 = y0
         self.double = double
-        self.out = False
+        # self.out = False
 
         if init:
             self.label_image = self.init_image(image=image_file_path, width=width, height=height, x_coor=self.x0 + 13,
