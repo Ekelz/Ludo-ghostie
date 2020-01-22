@@ -16,10 +16,6 @@ class Player:
         self.num_saved_pawns = 0
         self.win = False
 
-        # self.turn = turn
-        # self.roll = roll  # a list
-        # self.rolls = [0, 0, 0]
-
         # Initialisation of the lists of coordinates of the game pieces
         if color == RED:
             self.pawns = self.init_pawns(image_file_path=image_file_path, width=width, height=height, master=master,

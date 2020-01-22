@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import random
+import json
 import tkinter as tk
 from tkinter import messagebox
 from player import Player
@@ -41,6 +42,18 @@ class Engine:
         roll_button = tk.Button(self.canvas, text="ROLL", relief="raised", font=LARGE_FONT, command=self.rolls)
         roll_button.pack(in_=self.canvas)
         roll_button.place(x=800, y=120)
+
+        save_button = tk.Button(self.canvas, text="SAVE GAME", relief="raised", font=LARGE_FONT, command=self.save)
+        save_button.pack(in_=self.canvas)
+        save_button.place(x=800, y=550)
+
+        load_button = tk.Button(self.canvas, text="LOAD GAME", relief="raised", font=LARGE_FONT, command=self.load)
+        load_button.pack(in_=self.canvas)
+        load_button.place(x=800, y=600)
+
+        exit_button = tk.Button(self.canvas, text="EXIT GAME", relief="raised", font=LARGE_FONT, command=self.exit)
+        exit_button.pack(in_=self.canvas)
+        exit_button.place(x=800, y=650)
 
         self.display_turn()
 
@@ -142,7 +155,6 @@ class Engine:
         print("rolls from rolls' function: ", Engine.rolls_list)
 
     def check_move(self, player):  # Check if the player can make a move
-        global root
         print("##############check_move#############")
         a = all(roll == 6 for roll in Engine.rolls_list)
         print("check if 3 6 in a roll, dices: ", a)
@@ -167,8 +179,9 @@ class Engine:
         if win == True:
             print("the {}_player won the game.".format(player.color))
             self.label1.config(text="{} wins!".format(player.color))
-            tk.messagebox.showinfo("CONGRATULATIONS!", "It's the end... The {} player won the game.".format(player.color))
-            root.quit()
+            tk.messagebox.showinfo("CONGRATULATIONS!",
+                                   "It's the end... The {} player won the game.".format(player.color))
+            self.canvas.master.quit()
             return False
         print("#######exiting check_move function###########")
 
@@ -527,6 +540,99 @@ class Engine:
             if Engine.player_turn == GREEN:
                 self.player_move(player=self.green_player, opponent1=self.red_player, opponent2=self.blue_player,
                                  opponent3=self.yellow_player, cx=cx, cy=cy, out_x0=470, out_y0=470)
+
+    def save(self):
+        tk.messagebox.showinfo("Save game",  'Do you want to save the game? Press "OK" if yes.')
+        saved_data = [{"player_turn": Engine.player_turn}]
+
+        red_player = {
+            "color": self.red_player.color,
+            "num_saved_pawns": self.red_player.num_saved_pawns,
+            "pawns": []
+        }
+        for pawn in self.red_player.pawns:
+            m = dict(x0_y0=[pawn.x0, pawn.y0], x_y=[pawn.x, pawn.y], curr_index=pawn.curr_index, out=pawn.out,
+                     double=pawn.double)
+            red_player["pawns"].append(m)
+
+        blue_player = {
+            "color": self.blue_player.color,
+            "num_saved_pawns": self.blue_player.num_saved_pawns,
+            "pawns": []
+        }
+        for pawn in self.blue_player.pawns:
+            m = dict(x0_y0=[pawn.x0, pawn.y0], x_y=[pawn.x, pawn.y], curr_index=pawn.curr_index, out=pawn.out,
+                     double=pawn.double)
+            blue_player["pawns"].append(m)
+
+        yellow_player = {
+            "color": self.yellow_player.color,
+            "num_saved_pawns": self.yellow_player.num_saved_pawns,
+            "pawns": []
+        }
+        for pawn in self.yellow_player.pawns:
+            m = dict(x0_y0=[pawn.x0, pawn.y0], x_y=[pawn.x, pawn.y], curr_index=pawn.curr_index, out=pawn.out,
+                     double=pawn.double)
+            yellow_player["pawns"].append(m)
+
+        green_player = {
+            "color": self.green_player.color,
+            "num_saved_pawns": self.green_player.num_saved_pawns,
+            "pawns": []
+        }
+        for pawn in self.green_player.pawns:
+            m = dict(x0_y0=[pawn.x0, pawn.y0], x_y=[pawn.x, pawn.y], curr_index=pawn.curr_index, out=pawn.out,
+                     double=pawn.double)
+            green_player["pawns"].append(m)
+
+        saved_data.append(red_player)
+        saved_data.append(blue_player)
+        saved_data.append(yellow_player)
+        saved_data.append(green_player)
+
+        with open('saved_data_file.json', 'a') as save_file:
+            json.dump(saved_data, save_file, sort_keys=False, indent=12, separators=(',', ':'), ensure_ascii=False)
+
+        self.canvas.master.quit()
+
+    def exit(self):
+        tk.messagebox.showinfo("Exit game", "It's shame... Why quitting now? Play with us a little bit more... please...")
+        self.canvas.master.quit()
+
+    def load(self):  # load the most recent game
+        tk.messagebox.showinfo("Load game", "Are you sure? ")
+        print("............loading started............")
+        with open('saved_data_file.json', 'r') as save_file:
+            data = json.load(save_file)
+
+            Engine.player_turn = data[0]["player_turn"]
+            self.display_turn()
+
+            red_p = data[1]
+            blue_p = data[2]
+            yellow_p = data[3]
+            green_p = data[4]
+
+            self.load_data(self.red_player, red_p)
+            self.load_data(self.blue_player, blue_p)
+            self.load_data(self.yellow_player, yellow_p)
+            self.load_data(self.green_player, green_p)
+        print("............loading ended............")
+
+    @staticmethod
+    def load_data(player, dico):
+        player.num_saved_pawns = dico["num_saved_pawns"]
+        i = 0
+        for pawn in player.pawns:
+            pawn.x0 = dico["pawns"][i]["x0_y0"][0]
+            pawn.y0 = dico["pawns"][i]["x0_y0"][1]
+            pawn.x = dico["pawns"][i]["x_y"][0]
+            pawn.y = dico["pawns"][i]["x_y"][1]
+            pawn.curr_index = dico["pawns"][i]["curr_index"]
+            pawn.out = dico["pawns"][i]["out"]
+            pawn.double = dico["pawns"][i]["double"]
+            pawn.swap()
+            i = i + 1
 
 
 if __name__ == "__main__":
