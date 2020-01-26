@@ -21,11 +21,12 @@ if __name__ == "__main__":
     
     menubar = Menu(root) 
     root.config(menu=menubar) 
-    menufichier = Menu(menubar,tearoff=0) 
+    menufichier = Menu(menubar, tearoff=0)
     menubar.add_cascade(label="Fichier", menu=menufichier)
     menufichier.add_command(label="Nouvelle partie", underline=1, command=e.new)
     menufichier.add_command(label="Sauvegarder", underline=1, command=e.save)
     menufichier.add_command(label="Charger", underline=1, command=e.load)
     menufichier.add_separator()
     menufichier.add_command(label="Quitter", underline=1, command=exit)
+
     root.mainloop()

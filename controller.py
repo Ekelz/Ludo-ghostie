@@ -55,7 +55,8 @@ class Engine:
 
         self.game(cx=Engine.cx, cy=Engine.cy)  # The game is on each time we make a left click
 
-    def set_label(self, text, font_color, font, x_coor, y_coor):
+    @staticmethod
+    def set_label(text, font_color, font, x_coor, y_coor):
         label = tk.Label(text=text, fg=font_color, font=font)
         label.pack()
         label.place(x=x_coor, y=y_coor)
@@ -180,10 +181,8 @@ class Engine:
         print("Entering kill_function")
         # check if the game piece is not on a starting point
         if player.box_path[bb].x0 != player.white_boxes[1].x and player.box_path[bb].y0 != player.white_boxes[1].y:
-            if player.box_path[bb].x0 != player.white_boxes[14].x and player.box_path[bb].y0 != player.white_boxes[
-                14].y:
-                if player.box_path[bb].x0 != player.white_boxes[27].x and player.box_path[bb].y0 != player.white_boxes[
-                    27].y:
+            if player.box_path[bb].x0 != player.white_boxes[14].x and player.box_path[bb].y0 != player.white_boxes[14].y:
+                if player.box_path[bb].x0 != player.white_boxes[27].x and player.box_path[bb].y0 != player.white_boxes[27].y:
                     if player.box_path[bb].x0 != player.white_boxes[40].x and player.box_path[bb].y0 != \
                             player.white_boxes[40].y:
 
@@ -273,8 +272,6 @@ class Engine:
         print("[x0, x]: ", [player.pawns[0].x0, player.pawns[0].x])
         print("[y0, y]: ", [player.pawns[0].y0, player.pawns[0].y])
         print([player.pawns[0].x0, player.homes[0].x], [player.pawns[0].y0, player.homes[0].y])
-        # rolls = Engine.rolls_list
-        # print("rolls from player_game: ", rolls)
 
         if Engine.player_turn == player.color:  # It's this player's turn (according to it's color)
             for i in range(len(player.pawns)):  # Check if click is made on a pawn
@@ -341,20 +338,24 @@ class Engine:
                                     print(" in player_move_function: ", Engine.rolls_index)
 
                                 if track_index == 56:
+                                    tk.messagebox.showinfo("Pawn saved",
+                                                           "The {} player have saved one of his pawn."
+                                                           .format(player.color))
+                                    player.pawns[i].x0 = player.box_path[track_index].x
+                                    player.pawns[i].y0 = player.box_path[track_index].y
+                                    player.pawns[i].x = player.box_path[track_index].x + 25
+                                    player.pawns[i].y = player.box_path[track_index].y + 25
+                                    player.pawns[i].curr_index = track_index  # updating the pawn position on board
                                     player.pawns.remove(player.pawns[i])
                                     player.num_saved_pawns = player.num_saved_pawns + 1
                                     self.next_player(player)
                                     self.display_turn()
 
-                                # a = True
-                                # while a:
                                 if track_index > 56:
                                     print("Player cannot move, track_index out of range.")
                                     self.next_player(player)
                                     break
-                                    # self.display_turn()
-                                    # else:
-                                    #     a = False
+
                                 if Engine.rolls_index > len(Engine.rolls_list) - 1:
                                     print("next player turn (in player move function)")
                                     self.next_player(player)
@@ -397,20 +398,24 @@ class Engine:
                                     print(" in player_move_function: ", Engine.rolls_index)
 
                                 if track_index == 56:
+                                    tk.messagebox.showinfo("Pawn saved",
+                                                           "The {} player have saved one of his pawn."
+                                                           .format(player.color))
+                                    player.pawns[i].x0 = player.box_path[track_index].x
+                                    player.pawns[i].y0 = player.box_path[track_index].y
+                                    player.pawns[i].x = player.box_path[track_index].x + 25
+                                    player.pawns[i].y = player.box_path[track_index].y + 25
+                                    player.pawns[i].curr_index = track_index  # updating the pawn position on board
                                     player.pawns.remove(player.pawns[i])
                                     player.num_saved_pawns = player.num_saved_pawns + 1
                                     self.next_player(player)
                                     self.display_turn()
 
-                                    # a = True
-                                    # while a:
                                 if track_index > 56:
                                     print("Player cannot move, track_index out of range.")
                                     self.next_player(player)
                                     break
-                                    # self.display_turn()
-                                    # else:
-                                    #     a = False
+
                                 if Engine.rolls_index > len(Engine.rolls_list) - 1:
                                     print("next player turn (in player move function)")
                                     self.next_player(player)
@@ -453,6 +458,14 @@ class Engine:
                                     print(" in player_move_function: ", Engine.rolls_index)
 
                                 if track_index == 56:
+                                    tk.messagebox.showinfo("Pawn saved",
+                                                           "The {} player have saved one of his pawn."
+                                                           .format(player.color))
+                                    player.pawns[i].x0 = player.box_path[track_index].x
+                                    player.pawns[i].y0 = player.box_path[track_index].y
+                                    player.pawns[i].x = player.box_path[track_index].x + 25
+                                    player.pawns[i].y = player.box_path[track_index].y + 25
+                                    player.pawns[i].curr_index = track_index  # updating the pawn position on board
                                     player.pawns.remove(player.pawns[i])
                                     player.num_saved_pawns = player.num_saved_pawns + 1
                                     self.next_player(player)
@@ -537,8 +550,8 @@ class Engine:
         saved_data.append(yellow_player)
         saved_data.append(green_player)
 
-        with open('saved_data_file.json', 'a') as save_file:
-            json.dump(saved_data, save_file, sort_keys=False, indent=12, separators=(',', ':'), ensure_ascii=False)
+        with open('saved_data_file.json', 'w') as save_file:
+            json.dump(saved_data, save_file, sort_keys=False, indent=4, separators=(',', ':'), ensure_ascii=False)
 
         self.canvas.master.quit()
 
@@ -550,7 +563,7 @@ class Engine:
             "pawns": []
         }
 
-        for pawn in player.pawn:
+        for pawn in player.pawns:
             m = dict(x0_y0=[pawn.x0, pawn.y0], x_y=[pawn.x, pawn.y], curr_index=pawn.curr_index, double=pawn.double)
             dico["pawns"].append(m)
         return dico
@@ -578,39 +591,37 @@ class Engine:
     @staticmethod
     def load_data(player, dico):
         player.num_saved_pawns = dico["num_saved_pawns"]
-        i = 0
-        for pawn in player.pawns:
-            pawn.x0 = dico["pawns"][i]["x0_y0"][0]
-            pawn.y0 = dico["pawns"][i]["x0_y0"][1]
-            pawn.x = dico["pawns"][i]["x_y"][0]
-            pawn.y = dico["pawns"][i]["x_y"][1]
-            pawn.curr_index = dico["pawns"][i]["curr_index"]
-            pawn.out = dico["pawns"][i]["out"]
-            pawn.double = dico["pawns"][i]["double"]
-            pawn.swap()
-            i = i + 1
+        print("#####in loading function. player: ", player.color)
+        for i in range(len(dico["pawns"])):
+            player.pawns[i].x0 = dico["pawns"][i]["x0_y0"][0]
+            player.pawns[i].y0 = dico["pawns"][i]["x0_y0"][1]
+            player.pawns[i].x = dico["pawns"][i]["x_y"][0]
+            player.pawns[i].y = dico["pawns"][i]["x_y"][1]
+            player.pawns[i].curr_index = dico["pawns"][i]["curr_index"]
+            player.pawns[i].double = dico["pawns"][i]["double"]
+            player.pawns[i].swap()
 
     def exit(self):
         tk.messagebox.showinfo("Exit game", "You are quitting... :(")
         self.canvas.master.quit()
-        
+
+    def reset(self, player):
+        for i in range(len(player.pawns)):
+            player.pawns[i].x0 = player.homes[i].x
+            player.pawns[i].y0 = player.homes[i].y
+            player.pawns[i].x = player.homes[i].x + 25
+            player.pawns[i].y = player.homes[i].y + 25
+            player.pawns[i].curr_index = -1
+            player.pawns[i].swap()
+
     def new(self):   
-        # Ongoing         
-        self.red_player.pawns = self.red_player.init_pawns(image_file_path=RED_PAWN, width=PAWN_WIDTH, height=PAWN_HEIGHT, master=self.canvas,
-        ref_x=100, ref_y=100, size=25)
-        self.blue_player.pawns.clear()
-        self.yellow_player.pawns.clear()
-        self.green_player.pawns.clear()
-        
-        # self.red_player = Player(master=self.canvas, image_file_path=RED_PAWN, color=RED, width=PAWN_WIDTH,
-        #                          height=PAWN_HEIGHT, turn=True)
-        # self.blue_player = Player(master=self.canvas, image_file_path=BLUE_PAWN, color=BLUE, width=PAWN_WIDTH,
-        #                           height=PAWN_HEIGHT)
-        # self.yellow_player = Player(master=self.canvas, image_file_path=YELLOW_PAWN, color=YELLOW, width=PAWN_WIDTH,
-        #                             height=PAWN_HEIGHT)
-        # self.green_player = Player(master=self.canvas, image_file_path=GREEN_PAWN, color=GREEN, width=PAWN_WIDTH,
-        #                            height=PAWN_HEIGHT)
-        
+        # Ongoing
+        self.clean()
+        self.reset(self.red_player)
+        self.reset(self.blue_player)
+        self.reset(self.yellow_player)
+        self.reset(self.green_player)
+        Engine.player_turn = RED
 
 
 if __name__ == "__main__":
@@ -618,13 +629,4 @@ if __name__ == "__main__":
     d = Board(root)
     d.pack(side="top", fill="both", expand=True)
     e = Engine(d)
-    # menubar = Menu(root) 
-    # root.config(menu=menubar) 
-    # menufichier = Menu(menubar,tearoff=0) 
-    # menubar.add_cascade(label="Fichier", menu=menufichier)
-    # menufichier.add_command(label="Nouvelle partie", underline=1, command=e.new)
-    # menufichier.add_command(label="Sauvegarder", underline=1, command=e.save)
-    # menufichier.add_command(label="Charger", underline=1, command=e.load)
-    # menufichier.add_separator()
-    # menufichier.add_command(label="Quitter", underline=1, command=exit)
     root.mainloop()
