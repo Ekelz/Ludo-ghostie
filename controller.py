@@ -4,6 +4,7 @@ import random
 import json
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import Menu
 from player import Player
 from board import Board
 from game_config import *
@@ -24,7 +25,7 @@ class Engine:
     def __init__(self, canvas):
         # super().__init__()
 
-        tk.messagebox.showinfo(title=None, message="TO START GAME PRESS OKAY & TO EXIT PRESS CROSS UP IN THE WINDOW")
+        # tk.messagebox.showinfo(title=None, message="TO START GAME PRESS OKAY & TO EXIT PRESS CROSS UP IN THE WINDOW")
 
         self.canvas = canvas
 
@@ -39,21 +40,10 @@ class Engine:
 
         self.canvas.bind_all("<Button-1>", self.left_click)
 
-        roll_button = tk.Button(self.canvas, text="ROLL", relief="raised", font=LARGE_FONT, command=self.rolls)
+        roll_button = tk.Button(self.canvas, text="Roll", relief="raised", font=LARGE_FONT, command=self.rolls)
         roll_button.pack(in_=self.canvas)
         roll_button.place(x=800, y=120)
 
-        save_button = tk.Button(self.canvas, text="SAVE GAME", relief="raised", font=LARGE_FONT, command=self.save)
-        save_button.pack(in_=self.canvas)
-        save_button.place(x=800, y=550)
-
-        load_button = tk.Button(self.canvas, text="LOAD GAME", relief="raised", font=LARGE_FONT, command=self.load)
-        load_button.pack(in_=self.canvas)
-        load_button.place(x=800, y=600)
-
-        exit_button = tk.Button(self.canvas, text="EXIT GAME", relief="raised", font=LARGE_FONT, command=self.exit)
-        exit_button.pack(in_=self.canvas)
-        exit_button.place(x=800, y=650)
 
         self.display_turn()
 
@@ -537,10 +527,10 @@ class Engine:
         tk.messagebox.showinfo("Save game",  'Do you want to save the game? Press "OK" if yes.')
         saved_data = [{"player_turn": Engine.player_turn}]
 
-        red_player = saved_data(self.red_player)
-        blue_player = saved_data(self.blue_player)
-        yellow_player = saved_data(self.yellow_player)
-        green_player = saved_data(self.green_player)
+        red_player = self.save_data(self.red_player)
+        blue_player = self.save_data(self.blue_player)
+        yellow_player = self.save_data(self.yellow_player)
+        green_player = self.save_data(self.green_player)
 
         saved_data.append(red_player)
         saved_data.append(blue_player)
@@ -603,6 +593,24 @@ class Engine:
     def exit(self):
         tk.messagebox.showinfo("Exit game", "You are quitting... :(")
         self.canvas.master.quit()
+        
+    def new(self):   
+        # Ongoing         
+        self.red_player.pawns = self.red_player.init_pawns(image_file_path=RED_PAWN, width=PAWN_WIDTH, height=PAWN_HEIGHT, master=self.canvas,
+        ref_x=100, ref_y=100, size=25)
+        self.blue_player.pawns.clear()
+        self.yellow_player.pawns.clear()
+        self.green_player.pawns.clear()
+        
+        # self.red_player = Player(master=self.canvas, image_file_path=RED_PAWN, color=RED, width=PAWN_WIDTH,
+        #                          height=PAWN_HEIGHT, turn=True)
+        # self.blue_player = Player(master=self.canvas, image_file_path=BLUE_PAWN, color=BLUE, width=PAWN_WIDTH,
+        #                           height=PAWN_HEIGHT)
+        # self.yellow_player = Player(master=self.canvas, image_file_path=YELLOW_PAWN, color=YELLOW, width=PAWN_WIDTH,
+        #                             height=PAWN_HEIGHT)
+        # self.green_player = Player(master=self.canvas, image_file_path=GREEN_PAWN, color=GREEN, width=PAWN_WIDTH,
+        #                            height=PAWN_HEIGHT)
+        
 
 
 if __name__ == "__main__":
@@ -610,4 +618,13 @@ if __name__ == "__main__":
     d = Board(root)
     d.pack(side="top", fill="both", expand=True)
     e = Engine(d)
+    # menubar = Menu(root) 
+    # root.config(menu=menubar) 
+    # menufichier = Menu(menubar,tearoff=0) 
+    # menubar.add_cascade(label="Fichier", menu=menufichier)
+    # menufichier.add_command(label="Nouvelle partie", underline=1, command=e.new)
+    # menufichier.add_command(label="Sauvegarder", underline=1, command=e.save)
+    # menufichier.add_command(label="Charger", underline=1, command=e.load)
+    # menufichier.add_separator()
+    # menufichier.add_command(label="Quitter", underline=1, command=exit)
     root.mainloop()
